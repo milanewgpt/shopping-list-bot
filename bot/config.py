@@ -10,8 +10,9 @@ TELEGRAM_BOT_TOKEN: str = os.environ["TELEGRAM_BOT_TOKEN"]
 GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY", "")
 
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
-DB_PATH: Path = BASE_DIR / "shopping.db"
-TEMP_DIR: Path = BASE_DIR / "tmp"
+_db_env = os.environ.get("DB_PATH")
+DB_PATH: Path = Path(_db_env) if _db_env else BASE_DIR / "shopping.db"
+TEMP_DIR: Path = Path(os.environ.get("TEMP_DIR", str(BASE_DIR / "tmp")))
 TEMP_DIR.mkdir(exist_ok=True)
 
 # Bundled ffmpeg from imageio-ffmpeg (no system install needed)
