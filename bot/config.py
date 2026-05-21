@@ -6,14 +6,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TELEGRAM_BOT_TOKEN: str = os.environ["TELEGRAM_BOT_TOKEN"]
+TELEGRAM_BOT_TOKEN: str = (
+    os.getenv("TELEGRAM_BOT_TOKEN")
+    or os.getenv("TELEGRAM_TOKEN")
+    or os.getenv("BOT_TOKEN")
+    or ""
+)
+if not TELEGRAM_BOT_TOKEN:
+    raise RuntimeError(
+        "Telegram bot token is not configured. Set TELEGRAM_BOT_TOKEN "
+        "(preferred), TELEGRAM_TOKEN, or BOT_TOKEN in the Railway environment."
+    )
+
 GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY", "")
 
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
 _db_env = os.environ.get("DB_PATH")
 DB_PATH: Path = Path(_db_env) if _db_env else BASE_DIR / "shopping.db"
 TEMP_DIR: Path = Path(os.environ.get("TEMP_DIR", str(BASE_DIR / "tmp")))
-TEMP_DIR.mkdir(exist_ok=True)
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 # Bundled ffmpeg from imageio-ffmpeg (no system install needed)
 try:
